@@ -15,7 +15,7 @@
 Pass a config array to the constructor:
 
 ```php
-use peels\priority\Priority;
+use orange\priority\Priority;
 
 $priority = new Priority([
     'no duplicates' => true,

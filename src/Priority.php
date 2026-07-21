@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace peels\priority;
+namespace orange\priority;
 
 /**
  * Priority list helper that collects values and returns them ordered by configured weights.

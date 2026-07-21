@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "peels\\priority\\": "src/"
+            "orange\\priority\\": "src/"
         }
     },
     "minimum-stability": "dev",
