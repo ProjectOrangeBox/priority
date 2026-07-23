@@ -183,7 +183,7 @@ class Priority
         if ($this->noDuplicates) {
             // only calculate the hash once
             // and only if we are testing for no duplicates
-            $hash = sha1($value);
+            $hash = sha1((string) $value);
 
             if (!isset($this->duplicates[$hash])) {
                 $this->duplicates[$hash] = true;
