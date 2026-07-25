@@ -22,9 +22,13 @@ class Priority
      */
     protected array $priorities = [];
     /**
-     * Collected values keyed by a float composite of priority weight and monotonic timestamp.
+     * Collected values grouped by priority weight.
      *
-     * @var array<float, mixed>
+     * Appending into a per-weight bucket is what preserves insertion order
+     * within a weight - a single flat array keyed by weight+timestamp can't,
+     * because array keys can only be int or string.
+     *
+     * @var array<int, array<int, mixed>>
      */
     protected array $data = [];
     /**
@@ -105,10 +109,8 @@ class Priority
     {
         $outputText = '';
 
-        $this->sort();
-
         /* now build our output */
-        foreach ($this->data as $value) {
+        foreach ($this->array() as $value) {
             $outputText .= (string)$value;
         }
 
@@ -126,7 +128,8 @@ class Priority
     {
         $this->sort();
 
-        return array_values($this->data);
+        /* flatten the weight buckets back down into one ordered list */
+        return array_merge(...array_values($this->data));
     }
 
     /**
@@ -185,16 +188,14 @@ class Priority
             // and only if we are testing for no duplicates
             $hash = sha1((string) $value);
 
-            if (!isset($this->duplicates[$hash])) {
-                $this->duplicates[$hash] = true;
-                // use a composite float key so values with identical priority preserve insertion order
-                $this->data[floatval((string)$position . (string)\hrtime(true))] = $value;
-                $this->sorted = false;
+            if (isset($this->duplicates[$hash])) {
+                return;
             }
-        } else {
-            // append without deduplication, still preserving insertion order within the priority slot
-            $this->data[floatval((string)$position . (string)\hrtime(true))] = $value;
-            $this->sorted = false;
+
+            $this->duplicates[$hash] = true;
         }
+
+        $this->data[$position][] = $value;
+        $this->sorted = false;
     }
 }
