@@ -79,7 +79,7 @@ class Priority
      * Allow dynamic calls such as `addNormal()` or `addHigh()` to enqueue values.
      *
      * @param string $name      Method name that encodes the priority label.
-     * @param array  $arguments Values to queue.
+     * @param array<int, mixed> $arguments Values to queue.
      *
      * @throws \Exception When the requested priority label is unknown.
      *
@@ -134,10 +134,16 @@ class Priority
 
     /**
      * Convenience wrapper that returns the prioritised values as JSON.
+     *
+     * JSON_THROW_ON_ERROR because the return type is string: without it a
+     * failed encode returns false and PHP raises a TypeError on the way out,
+     * which says nothing about what could not be encoded.
+     *
+     * @throws \JsonException When the queued values cannot be encoded.
      */
     public function json(): string
     {
-        return json_encode($this->array());
+        return json_encode($this->array(), JSON_THROW_ON_ERROR);
     }
 
     /**
